@@ -12,15 +12,23 @@ from gensim.models import LdaModel
 from gensim.models import CoherenceModel
 import pickle
 
+# 要处理的数据月份
+month = 'dec'
+# 输入文件路径
+input_filepath = f'data/processed/weibo_{month}_processed.txt'
+# 文档主题矩阵保存文件名
+doc_topic_mat_filename = f'{month}_doc_topic_mat.pickle'
+# 单词主题矩阵保存文件名
+topic_word_mat_filename = f'{month}_topic_word_mat.pickle'
+
 
 # 读取文本文件
-def read_data(data_path="data/processed/weibo_nov_processed.txt"):
+def read_data(data_path=input_filepath):
     data = []
     fp = codecs.open(data_path, 'r', encoding='utf-8')
     for line in fp:
         if line != '':
-            line = line.split()
-            data.append([w for w in line if len(line) > 30])
+            data.append(line.split())
     return data
 
 
@@ -77,11 +85,11 @@ def calculate_score(data, max_topic=100):
 
 
 # 训练lda模型，返回“文档-主题”矩阵和“主题-词”矩阵
-def train_lda_model(data, num_topics=5, passes=200, alpha=2.5, eta=0.01):
+def train_lda_model(data, num_topics=5, passes=200, alpha=5, eta=0.01):
     # 建立词典
     dictionary = corpora.Dictionary(data)
     corpus = [dictionary.doc2bow(text) for text in data]
-    print(corpus[0])
+    # print(corpus[0])
 
     # 训练模型
     lda_model = LdaModel(corpus=corpus, id2word=dictionary, num_topics=num_topics, passes=passes, alpha=alpha, eta=eta)
@@ -105,10 +113,10 @@ def train_lda_model(data, num_topics=5, passes=200, alpha=2.5, eta=0.01):
     df_topic_word_matrix = pd.DataFrame(topic_word_matrix, columns=dictionary.values())
     print(df_topic_word_matrix)
 
-    with open(os.path.join('data', 'interim', 'doc_topic_mat.pickle'), 'wb') as f:
+    with open(os.path.join('data', 'interim', doc_topic_mat_filename), 'wb') as f:
         pickle.dump(document_topic_matrix, f)
 
-    with open(os.path.join('data', 'interim', 'topic_word_mat.pickle'), 'wb') as f:
+    with open(os.path.join('data', 'interim', topic_word_mat_filename), 'wb') as f:
         pickle.dump(topic_word_matrix, f)
 
     return document_topic_matrix, topic_word_matrix
