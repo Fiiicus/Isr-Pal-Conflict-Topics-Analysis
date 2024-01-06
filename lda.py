@@ -13,7 +13,7 @@ from gensim.models import CoherenceModel
 import pickle
 
 # 要处理的数据月份
-month = 'dec'
+month = 'nov'
 # 输入文件路径
 input_filepath = f'data/processed/weibo_{month}_processed.txt'
 # 文档主题矩阵保存文件名
@@ -85,7 +85,7 @@ def calculate_score(data, max_topic=100):
 
 
 # 训练lda模型，返回“文档-主题”矩阵和“主题-词”矩阵
-def train_lda_model(data, num_topics=5, passes=200, alpha=5, eta=0.01):
+def train_lda_model(data, num_topics=5, passes=200, alpha=3, eta=0.01):
     # 建立词典
     dictionary = corpora.Dictionary(data)
     corpus = [dictionary.doc2bow(text) for text in data]
@@ -96,7 +96,7 @@ def train_lda_model(data, num_topics=5, passes=200, alpha=5, eta=0.01):
 
     # 可视化
     display = pyLDAvis.gensim_models.prepare(lda_model, corpus, dictionary)
-    pyLDAvis.save_html(display, 'lda.html')
+    pyLDAvis.save_html(display, f'{month}_lda.html')
 
     # 获取文档-主题矩阵
     document_topic_matrix = []
