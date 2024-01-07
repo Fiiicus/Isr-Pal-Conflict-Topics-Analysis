@@ -9,14 +9,9 @@ import lda
 
 def cluster():
     num_topic, num_cluster, num_keywords = 15, 5, 30
-    data = lda.read_data()
-    text_topic_matrix, topic_word_matrix, words = lda.train_lda_model(data, num_topics=num_topic)
+    data = lda.read_docs()
+    text_topic_matrix, topic_word_matrix, words = lda.do_lda(data, n_topics=num_topic, alpha=0.22)
     chi = np.empty((num_cluster, num_topic))
-    for i in range(len(text_topic_matrix)):
-        if len(text_topic_matrix[i]) < 15:
-            dimensions_to_pad = num_topic - len(text_topic_matrix[i])
-            padding = (0, dimensions_to_pad)
-            text_topic_matrix[i] = np.pad(text_topic_matrix[i], padding, mode='constant', constant_values=0)
 
     # 为了画图
     pca = PCA(n_components=2)
