@@ -13,7 +13,7 @@ from gensim.models import CoherenceModel
 import pickle
 
 # 要处理的数据月份
-month = 'nov'
+month = 'otc'
 # 输入文件路径
 input_filepath = f'data/processed/weibo_{month}_processed.txt'
 # 文档主题矩阵保存文件名
