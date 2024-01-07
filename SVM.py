@@ -7,6 +7,9 @@ from sklearn.feature_extraction.text import CountVectorizer
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+import LDA_sklearn
+import kmeans
+
 
 def get_train(indices, BOW):
     data = BOW[[_[0] for _ in indices]]
@@ -15,7 +18,7 @@ def get_train(indices, BOW):
 
 
 def get_test(filepath, vocab):
-    with open(filepath, 'r') as f:
+    with open(filepath, 'r', encoding='utf8') as f:
         text_list = [_ for _ in f]
         # 创建一个CountVectorizer对象
         vectorizer = CountVectorizer(vocabulary=vocab)
@@ -27,10 +30,10 @@ def get_test(filepath, vocab):
     return bow_matrix
 
 
-# 加载Iris数据集作为示例多类别分类问题
-iris = load_iris()
-X = iris.data
-y = iris.target
+docs = LDA_sklearn.read_docs()
+vectorizer = CountVectorizer()
+X = vectorizer.fit_transform(docs)
+y = list(kmeans.cluster().values())
 
 # 将数据集分为训练集和测试集
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -56,7 +59,7 @@ print(confidence_scores)
 
 # 输出测试集中每个样本的分类结果
 print('测试集中每个样本的分类结果:')
-for i in range(len(X_test)):
+for i in range(X_test.shape[0]):
     print(f'样本 {i + 1}: 预测类别为 {y_pred[i]}, 置信度为 {max(confidence_scores[i]):.2f}')
 
 # 输出混淆矩阵
@@ -66,8 +69,20 @@ print(confusion)
 
 # 可视化混淆矩阵
 plt.figure(figsize=(8, 6))
-sns.heatmap(confusion, annot=True, fmt='d', cmap='Blues', xticklabels=iris.target_names, yticklabels=iris.target_names)
+sns.heatmap(confusion, annot=True, fmt='d', cmap='Blues')
 plt.xlabel('predict')
 plt.ylabel('true')
 plt.title('confusion_matrix')
 plt.show()
+
+words = vectorizer.get_feature_names_out()
+X = get_test("data/processed/weibo_new_processed.txt", words)
+predict = svm_classifier.predict(X)
+confidence_scores = svm_classifier.predict_proba(X)
+print('新数据中每个样本的分类结果:')
+count = 0
+for i in range(X.shape[0]):
+    if max(confidence_scores[i]) < 0.5:
+        count = count + 1
+    print(f'样本 {i + 1}: 预测类别为 {predict[i]}, 置信度为 {max(confidence_scores[i]):.2f}')
+print(f'{count / X.shape[0]:.2f}')
