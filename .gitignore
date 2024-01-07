@@ -1,3 +1,5 @@
 .idea/**
 **/*.html
 data/interim/*.pickle
+weibo-spider/crawls/**
+weibo-spider/结果文件/**

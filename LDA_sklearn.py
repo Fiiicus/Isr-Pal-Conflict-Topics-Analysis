@@ -4,12 +4,12 @@ import numpy as np
 from matplotlib import pyplot as plt
 from pyLDAvis import lda_model
 from sklearn.decomposition import LatentDirichletAllocation
-from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 import pyLDAvis
 import pyLDAvis.lda_model
 
 # 要处理的月份
-month = 'dec'
+month = 'otc'
 # 要处理文本的路径
 input_filepath = f'data/processed/weibo_{month}_processed.txt'
 
@@ -31,14 +31,21 @@ def countVectorize(docs):
 
 
 def TFIDFVectorize(docs):
-    # TODO
-    pass
+    # 使用CountVectorizer进行词频统计
+    vectorizer = CountVectorizer()
+    X = vectorizer.fit_transform(docs)
+    # 类调用
+    transformer = TfidfTransformer()
+
+    # 将词频矩阵X统计成TF-IDF值
+    tfidf = transformer.fit_transform(X)
+    return tfidf
 
 
 # 绘制困惑度随主题数变化的曲线
 def plot_perplexity(X):
     # 定义主题数的范围
-    topics_range = range(5, 50)
+    topics_range = range(2, 20)
 
     # 存储每个主题数对应的模型的困惑度
     perplexity_list = []
@@ -95,6 +102,7 @@ def plot_eta(X, n_topics):
 def do_lda(docs, n_topics, alpha, eta=0.1):
     vectorizer = CountVectorizer()
     X = vectorizer.fit_transform(docs)
+
     # 创建LDA模型实例
     lda = LatentDirichletAllocation(n_components=n_topics, learning_method='online', doc_topic_prior=alpha,
                                     topic_word_prior=eta)
@@ -115,8 +123,9 @@ def do_lda(docs, n_topics, alpha, eta=0.1):
 
 if __name__ == '__main__':
     # 随机种子
-    random.seed(114514)
+    # random.seed(114514)
     docs = read_docs()
-    # sampled_docs = random.sample(docs, len(docs)//10)
-    # plot_alpha(countVectorize(sampled_docs), 10)
-    do_lda(docs, 10, 0.04)
+    # # sampled_docs = random.sample(docs, len(docs)//10)
+    # plot_perplexity(countVectorize(docs))
+    # plot_alpha(countVectorize(docs), 10)
+    do_lda(docs, 7, 0.15)
