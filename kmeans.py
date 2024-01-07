@@ -75,7 +75,7 @@ def cluster():
         print(word_prob)
         mask = imageio.imread(r'bbll.jpeg')
         wordcloud = WordCloud(width=800, height=400, background_color='white',
-                              font_path='ZhiMangXing-Regular.ttf').generate_from_frequencies(word_prob)
+                              font_path='NotoSansSC-Black.ttf').generate_from_frequencies(word_prob)
         plt.figure(figsize=(10, 5))
         plt.imshow(wordcloud, interpolation='bilinear')
         plt.axis('off')
