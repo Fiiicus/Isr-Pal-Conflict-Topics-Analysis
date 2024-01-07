@@ -118,7 +118,7 @@ def do_lda(docs, n_topics, alpha, eta=0.1):
     topic_word_matrix = lda.components_
     print(f'shape of doc_topic_matrix: {doc_topic_matrix.shape}')
     print(f'shape of topic_word_matrix: {topic_word_matrix.shape}')
-    return doc_topic_matrix, topic_word_matrix
+    return doc_topic_matrix, topic_word_matrix, vectorizer.get_feature_names_out()
 
 
 if __name__ == '__main__':

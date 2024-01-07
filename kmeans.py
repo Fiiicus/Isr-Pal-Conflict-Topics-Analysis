@@ -4,13 +4,14 @@ from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from wordcloud import WordCloud
 import imageio
-import lda
+
+import LDA_sklearn
 
 
 def cluster():
     num_topic, num_cluster, num_keywords = 15, 5, 30
-    data = lda.read_docs()
-    text_topic_matrix, topic_word_matrix, words = lda.do_lda(data, n_topics=num_topic, alpha=0.22)
+    data = LDA_sklearn.read_docs()
+    text_topic_matrix, topic_word_matrix, words = LDA_sklearn.do_lda(data, n_topics=num_topic, alpha=0.22)
     chi = np.empty((num_cluster, num_topic))
 
     # 为了画图
@@ -68,7 +69,7 @@ def cluster():
         for j in range(num_keywords):
             word_prob[words[sorted_chi[j]]] = res[i][sorted_chi[j]]
         print(word_prob)
-        mask = imageio.imread(r'bbll.jpeg')
+        # mask = imageio.imread(r'bbll.jpeg')
         wordcloud = WordCloud(width=800, height=400, background_color='white',
                               font_path='NotoSansSC-Black.ttf').generate_from_frequencies(word_prob)
         plt.figure(figsize=(10, 5))
