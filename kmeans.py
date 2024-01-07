@@ -38,11 +38,13 @@ def cluster():
     labels = kmeans.labels_
 
     clusters = {}
+    doc_cluster = {}
     for i, label in enumerate(labels):
         if label not in clusters:
             clusters[label] = []
         vect = np.where(num_topic * text_topic_matrix[i] < 1, 0, 1)
         clusters[label].append(vect)
+        doc_cluster[i] = label
 
     m = []
     for i in range(num_cluster):
@@ -50,8 +52,6 @@ def cluster():
     m = np.array(m)
 
     n = len(m)  # 文档数
-    print(n)
-    print(len(text_topic_matrix))
     for i in range(num_cluster):
         mi = np.vstack(clusters[i])  # 第i类的所有文档主题关系矩阵
         for j in range(num_topic):
@@ -66,7 +66,6 @@ def cluster():
     res = chi @ topic_word_matrix
     for i in range(num_cluster):
         res[i] /= np.sum(res[i])
-    print(res)
 
     for i in range(num_cluster):
         sorted_chi = np.argsort(res[i])[::-1]
@@ -81,6 +80,7 @@ def cluster():
         plt.imshow(wordcloud, interpolation='bilinear')
         plt.axis('off')
         plt.show()
+    return doc_cluster
 
 
 if __name__ == '__main__':
